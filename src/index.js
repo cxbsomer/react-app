@@ -134,7 +134,7 @@ class Game extends React.Component {
         `Go to game start`
       const coordinate = this.state.coordinate[move]
       return (
-        <li key={move}>
+        <li key={move} className={move === this.state.stepNumber ? 'active' : ''}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
           <span className="coordinate">coordinate: ( {coordinate.x}, {coordinate.y} )</span>
         </li>

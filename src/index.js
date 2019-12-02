@@ -2,6 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+const coordinateLength = {
+  x: 3,
+  y: 3
+}
+
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -34,43 +39,50 @@ class Board extends React.Component {
   renderSquare(i) {
     return (
       <Square
+        key={i}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />
     )
   }
 
+  boardRow() {
+    const x = coordinateLength.x, y = coordinateLength.y
+    let board = []
+    for (let i = 0; i < y; i++) {
+      let renderSqs = []
+      for (let j = 0; j < x; j++) {
+        const renderSq = this.renderSquare(j + (i * x))
+        renderSqs = renderSqs.concat(renderSq)
+      }
+      const boardRow = <div className="board-row" key={i}>{renderSqs}</div>
+      board = board.concat(boardRow)
+    }
+    return board
+  }
+
+  axis(type) {
+    const length = coordinateLength[type]
+    let result = []
+    for (let i = 1; i <= length; i++) {
+      const axis = <div className={type} key={i}>{i}</div>
+      result = result.concat(axis)
+    }
+    return result
+  }
+
   render() {
     return (
       <div className="coordinate-axis">
-        {/* <div className="status">{status}</div> */}
         <div className="base-point">0</div>
         <div className="x-axis">
-          <div className="x">1</div>
-          <div className="x">2</div>
-          <div className="x">3</div>
+          {this.axis('x')}
         </div>
         <div className="y-axis">
-          <div className="y">1</div>
-          <div className="y">2</div>
-          <div className="y">3</div>
+          {this.axis('y')}
         </div>
         <div className="content-axis">
-          <div className="board-row">
-            {this.renderSquare(0)}
-            {this.renderSquare(1)}
-            {this.renderSquare(2)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(3)}
-            {this.renderSquare(4)}
-            {this.renderSquare(5)}
-          </div>
-          <div className="board-row">
-            {this.renderSquare(6)}
-            {this.renderSquare(7)}
-            {this.renderSquare(8)}
-          </div>
+          {this.boardRow()}
         </div>
       </div>
     );
@@ -102,8 +114,8 @@ class Game extends React.Component {
       return
     }
     squares[i] = this.state.xIsNext ? 'X' : 'O'
-    const x = i % 3 + 1
-    const y = Math.floor(i / 3) + 1
+    const x = i % coordinateLength.x + 1
+    const y = Math.floor(i / coordinateLength.x) + 1
     this.setState({
       history: history.concat([{
         squares

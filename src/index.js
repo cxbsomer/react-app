@@ -2,11 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
+// 棋盘格子大小 x,y
 const coordinateLength = {
   x: 3,
   y: 3
 }
 
+/**
+ *  3*3 棋盘格子 胜利条件
+ *  待优化 ---- 
+ */
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -27,6 +32,7 @@ function calculateWinner(squares) {
   return null;
 }
 
+// 每个单独的棋盘格子
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -35,8 +41,9 @@ function Square(props) {
   )
 }
 
+// 棋盘区域  包括坐标轴 格子
 class Board extends React.Component {
-  renderSquare(i) {
+  renderSquare(i) { 
     return (
       <Square
         key={i}
@@ -46,6 +53,7 @@ class Board extends React.Component {
     )
   }
 
+  // 循环渲染格子区域
   boardRow() {
     const x = coordinateLength.x, y = coordinateLength.y
     let board = []
@@ -61,6 +69,7 @@ class Board extends React.Component {
     return board
   }
 
+  // 循环渲染坐标轴
   axis(type) {
     const length = coordinateLength[type]
     let result = []
@@ -89,6 +98,7 @@ class Board extends React.Component {
   }
 }
 
+// 游戏区域
 class Game extends React.Component {
   constructor(props) {
     super(props)
@@ -101,14 +111,15 @@ class Game extends React.Component {
         y: 0
       }],
       stepNumber: 0,
-      xIsNext: true
+      xIsNext: true,
+      isToLater: true
     }
   }
 
+  // 点击格子触发函数
   handleClick(i) {
     const history = this.state.history.slice(0, this.state.stepNumber + 1)
-    const current = history[history.length - 1]
-    const squares = current.squares.slice()
+    const squares = history[history.length - 1].squares.slice()
     const coordinate = this.state.coordinate.slice(0, this.state.stepNumber + 1)
     if (calculateWinner(squares) || squares[i]) {
       return
@@ -128,6 +139,7 @@ class Game extends React.Component {
     })
   }
 
+  // 跳转到历史记录
   jumpTo(step) {
     this.setState({
       stepNumber: step,
@@ -135,12 +147,16 @@ class Game extends React.Component {
     })
   }
 
-  render() {
-    const history = this.state.history
-    const current = history[this.state.stepNumber]
-    const winner = calculateWinner(current.squares)
+  // 升序、降序 切换
+  changeOrder() {
+    this.setState({
+      isToLater: !this.state.isToLater
+    }, () => console.log(this.state.isToLater))
+  }
 
-    const moves = history.map((step, move) => {
+  // 历史记录列表
+  moves(history) {
+    let moves = history.map((step, move) => {
       const desc = move ?
         `Go to move # ${move}` :
         `Go to game start`
@@ -152,6 +168,14 @@ class Game extends React.Component {
         </li>
       )
     })
+    moves = this.state.isToLater ? moves : moves.reverse()
+    return moves
+  }
+
+  render() {
+    const history = this.state.history
+    const current = history[this.state.stepNumber]
+    const winner = calculateWinner(current.squares)
 
     let status
     if (winner) {
@@ -159,6 +183,8 @@ class Game extends React.Component {
     } else {
       status = `Next Player: ${this.state.xIsNext ? 'X' : 'O'}`
     }
+
+    let order = <button onClick={() => this.changeOrder()}>升序 / 降序</button>
 
     return (
       <div className="game">
@@ -169,8 +195,8 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
+          <div>{status} {order}</div>
+          <ol>{this.moves(history)}</ol>
         </div>
       </div>
     );

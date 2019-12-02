@@ -95,3 +95,7 @@ ol, ul {
   font-weight: bold;
   color: red;
 }
+
+.winner {
+  color: red;
+}

@@ -1,12 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import './index.css'
 
 // 棋盘格子大小 x,y
 const coordinateLength = {
   x: 3,
   y: 3
 }
+
+let victorys = []
 
 /**
  *  3*3 棋盘格子 胜利条件
@@ -22,20 +24,23 @@ function calculateWinner(squares) {
     [2, 5, 8],
     [0, 4, 8],
     [2, 4, 6],
-  ];
+  ]
   for (let i = 0; i < lines.length; i++) {
-    const [a, b, c] = lines[i];
+    const [a, b, c] = lines[i]
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];
+      victorys = victorys.concat(lines[i])
+      return squares[a]
+    } else {
+      victorys = []
     }
   }
-  return null;
+  return null
 }
 
 // 每个单独的棋盘格子
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button className={'square ' + (props.isWin ? 'winner' : '')} onClick={props.onClick}>
       {props.value}
     </button>
   )
@@ -44,9 +49,17 @@ function Square(props) {
 // 棋盘区域  包括坐标轴 格子
 class Board extends React.Component {
   renderSquare(i) { 
+    let isWin = false
+    victorys.map(val => {
+      if (val === i) {
+        isWin = true
+      }
+      return false
+    })
     return (
       <Square
         key={i}
+        isWin={isWin}
         value={this.props.squares[i]}
         onClick={() => this.props.onClick(i)}
       />

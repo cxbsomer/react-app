@@ -48,3 +48,42 @@ ol, ul {
 .game-info {
   margin-left: 20px;
 }
+
+.coordinate {
+    margin-left: 20px;
+}
+
+.coordinate-axis {
+  position: relative;
+  width: 180px;
+}
+
+.x-axis {
+  display: flex;
+  position: absolute;
+  left: 33px;
+  top: 0;
+  padding-right: 30px;
+  border-bottom: 1px solid #999;
+}
+
+.y-axis {
+  position: absolute;
+  left: 0;
+  top: 33px;
+  border-right: 1px solid #999;
+  padding-bottom: 30px;
+}
+
+.x, .y, .base-point {
+  width: 33px;
+  font-size: 18px;
+  line-height: 33px;
+  text-align: center;
+}
+
+.content-axis {
+  position: absolute;
+  left: 33px;
+  top: 34px;
+}

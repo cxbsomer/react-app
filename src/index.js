@@ -49,12 +49,8 @@ function Square(props) {
 // 棋盘区域  包括坐标轴 格子
 class Board extends React.Component {
   renderSquare(i) { 
-    let isWin = false
-    victorys.map(val => {
-      if (val === i) {
-        isWin = true
-      }
-      return false
+    let isWin = victorys.some(val => {
+      return val === i
     })
     return (
       <Square
@@ -185,14 +181,24 @@ class Game extends React.Component {
     return moves
   }
 
+  checkIsTie(square) {
+    let res = square.every(val => {
+      return val
+    })
+    return res
+  }
+
   render() {
     const history = this.state.history
     const current = history[this.state.stepNumber]
     const winner = calculateWinner(current.squares)
 
+    let isTie = this.checkIsTie(current.squares)
     let status
     if (winner) {
       status = `Winner: ${winner}`
+    } else if (isTie) {
+      status = `This tie is a draw!`
     } else {
       status = `Next Player: ${this.state.xIsNext ? 'X' : 'O'}`
     }
